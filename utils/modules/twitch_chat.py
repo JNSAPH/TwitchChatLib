@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import requests
 from typing import Callable, Dict, Optional
+import threading
 
 class ChatClient:
     """    
@@ -100,3 +101,28 @@ class ChatClient:
         Start the chat client by connecting to Twitch chat and handling incoming messages.
         """
         asyncio.run(self._connect_to_socket())
+
+class ChatClientThreaded:
+    def __init__(self, client_id: str, client_secret: str, channel_name: str):
+        self.chat_client = ChatClient(client_id, client_secret, channel_name)
+        self.thread = threading.Thread(target=self._run_client)
+
+    def _run_client(self):
+        self.chat_client.start()
+
+    def start(self):
+        self.thread.start()
+
+    def stop(self):
+        self.chat_client.stop()  # You'll need to implement a stop method in your ChatClient if needed.
+        self.thread.join()
+
+    def add_message_callback(self, phrase: str, callback: Callable):
+        """
+        Register a callback function for a specific chat message phrase.
+        
+        Args:
+            phrase (str): The phrase to trigger the callback.
+            callback (callable): The callback function to execute when the phrase is found.
+        """
+        self.chat_client.add_message_callback(phrase, callback)
