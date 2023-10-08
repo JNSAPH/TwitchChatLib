@@ -1,17 +1,20 @@
-import pyttsx3
+from gtts import gTTS
+import uuid
+from pydub import AudioSegment
+from pydub.playback import play
+import os
 
 class TTS:
     """
-    Text-to-Speech (TTS) class for generating speech from text.
+    Text-to-Speech (TTS) class for generating speech from text using gTTS.
 
     Attributes:
-        engine (pyttsx3.Engine): The TTS engine.
+        output_folder (str): The folder where audio files will be saved.
     """
     
-    def __init__(self):
-        self.engine = pyttsx3.init()
-        self.engine.setProperty('voice', 'VoiceName')  # Replace 'VoiceName' with the desired voice name
-        self.engine.setProperty('rate', 150)
+    def __init__(self, output_folder='audio'):
+        self.output_folder = output_folder
+        os.makedirs(output_folder, exist_ok=True)
     
     def clearLogFile(self):
         """
@@ -39,32 +42,39 @@ class TTS:
         """
         self._log(text)
 
-        # Say the text
-        self.engine.say(text)
-        self.engine.runAndWait()
+        # Generate a random filename
+        filename = str(uuid.uuid4()) + '.mp3'
+        audio_file = os.path.join(self.output_folder, filename)
+
+        # Generate audio file
+        tts = gTTS(text, lang="de")
+        tts.save(audio_file)
+
+        # Play the audio file
+        audio = AudioSegment.from_mp3(audio_file)
+        play(audio)
+
+        # Delete the audio file after playing
+        os.remove(audio_file)
 
     def sayWithCustomVoice(self, text: str, voice: str):
         """
-        Converts and speaks the given text with a custom voice.
+        Converts and speaks the given text with a custom voice (not supported by gTTS).
 
         Args:
             text (str): The text to be spoken.
-            voice (str): The name of the custom voice to use.
+            voice (str): The name of the custom voice (not supported by gTTS).
         """
         self._log(text)
-
-        self.engine.setProperty('voice', voice)
-        self.say(text)
+        print("Custom voices are not supported by gTTS.")
 
     def sayWithCustomSpeed(self, text: str, rate: int):
         """
-        Converts and speaks the given text with a custom speech rate.
+        Converts and speaks the given text with a custom speech rate (not supported by gTTS).
 
         Args:
             text (str): The text to be spoken.
-            rate (int): The custom speech rate (words per minute).
+            rate (int): The custom speech rate (words per minute, not supported by gTTS).
         """
         self._log(text)
-
-        self.engine.setProperty('rate', rate)
-        self.say(text)
+        print("Custom speech rates are not supported by gTTS.")
