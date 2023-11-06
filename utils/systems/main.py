@@ -3,3 +3,5 @@ import logging
 
 def setup(DEBUG = False):
     setup_dotenv()
+
+    print("\n"*3)

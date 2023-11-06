@@ -77,4 +77,26 @@ class TTS:
             rate (int): The custom speech rate (words per minute, not supported by gTTS).
         """
         self._log(text)
-        print("Custom speech rates are not supported by gTTS.")
+
+        # Generate a random filename
+        filename = str(uuid.uuid4()) + '.mp3'
+        audio_file = os.path.join(self.output_folder, filename)
+
+        # Generate audio file with gTTS
+        tts = gTTS(text, lang="de")
+        tts.save(audio_file)
+
+        # Load the audio file with pydub
+        audio = AudioSegment.from_mp3(audio_file)
+
+        # Adjust the speed
+        audio = audio.speedup(playback_speed=rate / 100.0)  # Convert rate to a speedup factor
+
+        # Export the modified audio
+        audio.export(audio_file, format="mp3")
+
+        # Play the modified audio
+        play(audio)
+
+        # Delete the audio file after playing
+        os.remove(audio_file)
