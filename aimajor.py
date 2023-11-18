@@ -14,6 +14,8 @@ mic = AudioToTextConverter(mic_index=1, language='de-DE')
 tts = TTS()
 openai.api_key = config('OPENAI_KEY')
 
+mic.print_all_microphones()
+
 FILE_PATH = "config/conversation.txt"
 PROMPT_PATH = "config/prompt.txt"
 

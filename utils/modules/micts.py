@@ -39,6 +39,10 @@ class AudioToTextConverter:
             return "Speech recognition could not understand audio"
         except sr.RequestError as e:
             return "Could not request results from Google Speech Recognition service; {0}".format(e)
+        
+    def print_all_microphones(self):
+        for index, name in enumerate(sr.Microphone.list_microphone_names()):
+            print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
 
 # Example usage:
 # converter = AudioToTextConverter(mic_index=0)  # Specify the desired microphone index (if needed)
